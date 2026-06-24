@@ -71,9 +71,12 @@ Before final synthesis, run evaluator passes and write their outputs:
 
 The final report is blocked until evaluator files say `PASS`. If any evaluator says `FAIL`, dispatch follow-up research or revise the report before delivery.
 
+For the citation audit, run `scripts/evaluate-source-coverage.py` against the actual `final-report.md`, not against a sample, draft, source registry, or intermediate note. Record the exact command and output in `evaluators/citation-audit.md`.
+
 ## Final Report Gate
 The final report must:
 - use inline source IDs or markdown links on factual sentences.
+- keep source IDs or markdown links adjacent to the sentence they support, either before the sentence punctuation or immediately after it.
 - use linked sources on every key finding sentence.
 - include a `Sources` section where every cited source ID resolves to a URL.
 - avoid vague source labels such as "SEC filings" or "developer survey" without a link.

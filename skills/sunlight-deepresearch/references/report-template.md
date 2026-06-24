@@ -49,9 +49,10 @@ Use this template when synthesizing subagent findings into a final deliverable.
 - Separate what sources say from what the agent infers.
 - Every factual sentence should have an inline linked source or source tag.
 - Every key finding sentence must have an inline linked source or source tag.
+- Source tags may appear before sentence punctuation or immediately after it, but they must remain adjacent to the supported sentence.
 - Keep citation tags attached to factual claims until they are resolved into links and a final source list.
 - Do not write vague source labels such as "SEC filings", "earnings reports", or "developer surveys" without exact links.
-- Run `scripts/evaluate-source-coverage.py` before final delivery when a report file exists. If it fails, revise or research more instead of delivering.
+- Run `scripts/evaluate-source-coverage.py` against the actual `final-report.md` before final delivery when a report file exists. If it fails, revise or research more instead of delivering.
 
 ## Strategy Rules
 - Add recommendations only when requested or when the research objective clearly supports a decision.

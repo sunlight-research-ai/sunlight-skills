@@ -30,7 +30,7 @@ Run deep research as a disciplined subagent orchestration workflow: decompose th
 - Register every useful fetched link in a source registry and create a per-source evidence file before using it in findings.
 - Ask subagents to separate evidence, inference, uncertainty, and open questions.
 - Synthesize only after reviewing the returned findings.
-- Run citation, source-quality, coverage, and contradiction evaluators before final delivery.
+- Run citation, source-quality, coverage, and contradiction evaluators against the actual final report before final delivery.
 - Resolve conflicts with targeted follow-up research instead of smoothing them over.
 - Run a final verifier or critic pass before presenting the final report.
 - Block final delivery when key findings or factual sentences lack linked sources.
@@ -54,7 +54,7 @@ Run deep research as a disciplined subagent orchestration workflow: decompose th
 7. Run a wave checkpoint using `references/wave-checkpoint-template.md`; dispatch follow-up subagents only for material gaps, contradictions, weak evidence, or missing citation coverage.
 8. Extract structured facts, metrics, entities, and source metadata using `references/structured-data-template.md` when tables, charts, or precise comparisons are useful.
 9. Synthesize the findings into the requested report shape using `references/report-template.md`.
-10. Run evaluator agents: citation audit, source-quality audit, coverage audit, and contradiction audit. Use `scripts/evaluate-source-coverage.py` for the citation coverage check when files are available.
+10. Run evaluator agents: citation audit, source-quality audit, coverage audit, and contradiction audit. Use `scripts/evaluate-source-coverage.py` against `final-report.md` for the citation coverage check when files are available, and save the command/output in `evaluators/citation-audit.md`.
 11. If any evaluator fails, revise the report or dispatch follow-up research; do not deliver a polished final report.
 12. Add strategic implications, recommendations, and "so what" analysis only when grounded in linked evidence.
 13. Persist or package the final report, sources, evaluator outputs, and limitations in the format the user needs.
@@ -87,6 +87,7 @@ Stop and ask the user when:
 ## Anti-Patterns
 - Producing a polished report without independent evidence collection.
 - Producing a report with vague "key sources" instead of linked citations.
+- Validating a sample, draft, or source registry instead of the actual `final-report.md`.
 - Citing a source label that does not resolve to a URL.
 - Giving every subagent the same broad prompt.
 - Treating search snippets as evidence without opening and evaluating sources.
