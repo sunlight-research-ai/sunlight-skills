@@ -1,0 +1,4 @@
+interface:
+  display_name: "Sunlight Deep Research"
+  short_description: "Run deep research through subagent orchestration"
+

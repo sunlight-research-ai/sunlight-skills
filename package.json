@@ -1,0 +1,18 @@
+{
+  "name": "sunlight-skills",
+  "version": "0.1.0",
+  "description": "Portable agent skills from Sunlight Research",
+  "type": "module",
+  "main": ".opencode/plugins/sunlight-skills.js",
+  "keywords": [
+    "skills",
+    "agents",
+    "deep-research",
+    "subagents",
+    "codex",
+    "claude",
+    "opencode"
+  ],
+  "license": "MIT"
+}
+

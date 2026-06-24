@@ -1,0 +1,42 @@
+{
+  "name": "sunlight-skills",
+  "version": "0.1.0",
+  "description": "Portable agent skills from Sunlight Research, starting with subagent-driven deep research.",
+  "author": {
+    "name": "Sunlight Research",
+    "url": "https://github.com/sunlight-research-ai"
+  },
+  "homepage": "https://github.com/sunlight-research-ai/sunlight-skills",
+  "repository": "https://github.com/sunlight-research-ai/sunlight-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "deep-research",
+    "subagents",
+    "research",
+    "workflow"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Sunlight Skills",
+    "shortDescription": "Agent skills for deep research and research workflows",
+    "longDescription": "Use Sunlight Skills to guide agent work through subagent-based deep research, evidence collection, synthesis, and report generation.",
+    "developerName": "Sunlight Research",
+    "category": "Research",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Run deep research on this topic.",
+      "Create a sourced research report."
+    ],
+    "websiteURL": "https://github.com/sunlight-research-ai/sunlight-skills",
+    "privacyPolicyURL": "https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement",
+    "termsOfServiceURL": "https://docs.github.com/en/site-policy/github-terms/github-terms-of-service",
+    "brandColor": "#FACC15",
+    "screenshots": []
+  }
+}
+

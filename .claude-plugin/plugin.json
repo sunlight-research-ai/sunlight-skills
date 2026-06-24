@@ -1,0 +1,19 @@
+{
+  "name": "sunlight-skills",
+  "description": "Portable agent skills from Sunlight Research, starting with subagent-driven deep research.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Sunlight Research"
+  },
+  "homepage": "https://github.com/sunlight-research-ai/sunlight-skills",
+  "repository": "https://github.com/sunlight-research-ai/sunlight-skills",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "deep-research",
+    "subagents",
+    "research",
+    "workflow"
+  ]
+}
+
