@@ -12,6 +12,10 @@ Use this template after an investigator subagent returns raw research notes. Com
 - <Query or source path> -> <source tags>
 - <Query or source path> -> <source tags>
 
+## Source Files Checked
+- [SRC_001] -> `sources/SRC_001.md`
+- [SRC_002] -> `sources/SRC_002.md`
+
 ## Key Findings
 
 ### <Theme>
@@ -37,5 +41,6 @@ Use this template after an investigator subagent returns raw research notes. Com
 - Do not invent sources or claims.
 - Do not drop important contrary evidence.
 - Do not write the final report here.
+- Verify every source tag resolves to a linked source registry row or per-source file.
+- Every factual sentence in `Key Findings` must carry a source tag.
 - If source-backed findings are insufficient, label the output partial.
-

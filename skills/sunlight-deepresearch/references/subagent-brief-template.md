@@ -11,6 +11,13 @@ Objective:
 Context:
 <Relevant background from the user request and any constraints.>
 
+Artifact paths:
+- Run folder:
+- Source registry:
+- Per-source files:
+- Raw notes file:
+- Compressed findings file:
+
 Questions to answer:
 1. <Question>
 2. <Question>
@@ -31,6 +38,8 @@ Source requirements:
 - Use the assigned source-tag range or prefix if provided.
 - Give the same source one stable source tag even if multiple providers return it.
 - Aim for 12-20 unique useful sources for broad tracks when available; if fewer, explain source scarcity and the searches attempted.
+- For every useful opened link, immediately update `source-registry.md` and create or update a `sources/SRC_NNN.md` evidence file.
+- Do not include a factual claim in findings unless it has an inline source tag that resolves to a linked source.
 
 Query plan:
 - Orientation:
@@ -54,6 +63,10 @@ Output format:
   - Sources found:
   - Source class:
   - Gaps remaining:
+- Source registry updates:
+  - Source ID:
+  - URL:
+  - Claims supported:
 - Key findings:
 - Evidence and sources:
 - Conflicts or uncertainty:
@@ -69,4 +82,5 @@ Output format:
 - Require source links when external facts are involved.
 - Require source tags to stay attached to claims.
 - Require provider outputs to be merged and deduplicated before findings are reported.
+- Require artifact files to be updated before findings are returned.
 - Ask for concise findings that are easy to merge.

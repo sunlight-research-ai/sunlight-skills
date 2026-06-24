@@ -3,15 +3,31 @@
 Use this reference when the user wants to run or design a deep research workflow without assuming a codebase.
 
 ## Core Loop
-1. Define the objective and output.
-2. Decompose into independent tracks.
-3. Dispatch focused subagents.
-4. Collect structured findings.
-5. Detect gaps, conflicts, and weak evidence.
-6. Dispatch follow-up research where needed.
-7. Synthesize.
-8. Verify.
-9. Deliver.
+1. Create the run folder and evidence ledger.
+2. Define the objective and output.
+3. Decompose into independent tracks.
+4. Dispatch focused subagents.
+5. Collect source-backed findings and per-source evidence files.
+6. Detect gaps, conflicts, weak evidence, and missing citations.
+7. Dispatch follow-up research where needed.
+8. Synthesize.
+9. Run evaluator agents.
+10. Deliver only after evaluator approval.
+
+## Step 0: Create Evidence Artifacts
+Before the first search, create the run folder described in `evidence-tracking-template.md`.
+
+Required artifacts:
+- `research-brief.md`
+- `research-plan.md`
+- `source-registry.md`
+- `sources/SRC_NNN.md` for every useful fetched link
+- `subagents/<track>-raw.md`
+- `subagents/<track>-compressed.md`
+- `evaluators/*.md`
+- `final-report.md`
+
+If the runtime cannot write files, create equivalent markdown artifacts in the conversation and warn that file persistence is unavailable.
 
 ## Step 1: Start and Clarify
 Before dispatching subagents, create a research brief. This brief becomes the contract for all later work.
@@ -83,9 +99,10 @@ Every investigator should treat the assignment as thorough research. The goal is
 Each investigator should work in a loop:
 1. Create a small query pack for the track, then choose the next query or source to inspect.
 2. Open and evaluate the source, not just the search result snippet.
-3. Record useful findings with stable source tags such as `[SRC_1]`.
-4. Reflect on what is still missing.
-5. Continue until the question is answered, evidence becomes repetitive, or the budget is reached.
+3. Register each useful source in `source-registry.md` and write a `sources/SRC_NNN.md` evidence file.
+4. Record useful findings with stable source tags such as `[SRC_001]`.
+5. Reflect on what is still missing.
+6. Continue until the question is answered, evidence becomes repetitive, or the budget is reached.
 
 Use the model's default `web_search` first. If Tavily, Exa, or Linkup credentials/tools are available, use all available providers for relevant query variants, merge their outputs, and deduplicate sources before compression. Do not block or fail the workflow when provider keys are unavailable; continue with default web search and any successful optional providers. Tell new users that optional keys make insights richer by improving source diversity, freshness, user-voice coverage, and recall.
 
@@ -96,6 +113,7 @@ Do not stop just because the first results are obvious or because several source
 Investigator output should include:
 - Queries or source paths used.
 - Coverage matrix: query type, queries attempted, sources found, source class, gaps remaining.
+- Source registry rows and per-source evidence files updated.
 - Key findings.
 - Source tags with links or source names.
 - Conflicts or uncertainty.
@@ -140,7 +158,7 @@ Structured extraction is useful for:
 - Claim verification.
 - Reusing facts in later workflows.
 
-Do not extract unsupported facts. Every row should point back to a source tag, source URL, or named source.
+Do not extract unsupported facts. Every row should point back to a source tag and linked source URL.
 
 ## Step 8: Generate the Report
 Write the report from compressed findings and structured data, not from raw search snippets alone.
@@ -151,7 +169,7 @@ Priority order:
 3. The user's requested output format and required sections.
 4. The evidence actually found.
 
-Every factual claim should have a citation or be clearly labeled as inference. Keep source tags attached through the draft and resolve them to links or a source list before final delivery.
+Every factual sentence should have an inline source tag or linked citation, and every key finding sentence must have one. Keep source tags attached through the draft and resolve them to links or a source list before final delivery. Do not use vague source labels such as "SEC filings" or "developer survey" without exact links.
 
 ## Step 9: Add Strategic Implications
 Add recommendations, risks, and "so what" analysis only when the user wants decisions, strategy, prioritization, or next steps.
@@ -165,7 +183,16 @@ Strategic analysis should:
 
 If the research does not support a recommendation, say so and provide the missing evidence needed.
 
-## Step 10: Package or Persist the Result
+## Step 10: Run Evaluators
+Before final delivery, run evaluator agents:
+- Citation auditor: every key finding and most factual sentences have linked sources.
+- Source-quality auditor: source class fits the claim type.
+- Coverage auditor: required tracks, query categories, and source classes were attempted.
+- Contradiction auditor: conflicts are visible and not smoothed over.
+
+When files are available, run `scripts/evaluate-source-coverage.py final-report.md --registry source-registry.md`. If any evaluator fails, revise or dispatch follow-up research. Do not deliver a polished report with missing linked sources.
+
+## Step 11: Package or Persist the Result
 Finish by packaging the final artifact in the form the user needs: markdown report, memo, table, implementation plan, dataset, or durable application state.
 
 For manual agent workflows, return:
@@ -174,14 +201,17 @@ For manual agent workflows, return:
 - Structured data when useful.
 - Confidence and limitations.
 - Follow-up questions.
+- Evaluator audit results.
 
 For durable product workflows, persist:
 - Research brief.
 - Research plan.
 - Subagent briefs and outputs.
 - Source registry.
+- Per-source evidence files.
 - Compressed findings.
 - Structured data.
+- Evaluator outputs.
 - Final report.
 - Strategic analysis.
 - Status, cancellation, retry, and error metadata.
@@ -198,6 +228,8 @@ Before final delivery, check:
 - The report answers the original objective.
 - The level of detail matches the user's requested format.
 - Evidence, inference, and recommendations are distinguishable.
+- Key finding sentences have linked sources.
+- The citation coverage evaluator passes when file artifacts are available.
 - Confidence and limitations are stated plainly.
 
 See `persistence-and-runtime.md` for implementation-oriented runtime guidance.

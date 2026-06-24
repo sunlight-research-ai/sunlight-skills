@@ -13,6 +13,9 @@ Use this template after each wave of compressed investigator findings.
 - Missing dimensions:
 - Thin or weakly sourced dimensions:
 - Contradicted dimensions:
+- Citation coverage:
+- Source files present:
+- Source registry completeness:
 
 ## Material Gaps
 - <Gap that would change the final answer or confidence.>
@@ -36,5 +39,5 @@ Use this template after each wave of compressed investigator findings.
 - The original brief matters more than checking every possible dimension.
 - Dispatch another wave only when the gap is material.
 - Prefer targeted follow-ups over repeating broad tracks.
-- Stop when additional research is unlikely to change the answer or the configured wave budget is reached.
-
+- Do not proceed to synthesis if source registry rows, per-source files, or citation coverage are missing.
+- Stop when additional research is unlikely to change the answer, citation coverage passes, and the configured wave budget is reached.

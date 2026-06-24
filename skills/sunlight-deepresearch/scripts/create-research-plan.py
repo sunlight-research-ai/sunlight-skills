@@ -48,6 +48,14 @@ def main() -> None:
     print("- Named entities:")
     print("- Geography / market:")
     print("- Evaluation dimensions:")
+    print("\n## Evidence Artifacts")
+    print("- Run folder: research-runs/<topic-slug>/")
+    print("- Source registry: research-runs/<topic-slug>/source-registry.md")
+    print("- Per-source evidence files: research-runs/<topic-slug>/sources/SRC_NNN.md")
+    print("- Subagent raw notes: research-runs/<topic-slug>/subagents/<track>-raw.md")
+    print("- Subagent compressed findings: research-runs/<topic-slug>/subagents/<track>-compressed.md")
+    print("- Evaluator outputs: research-runs/<topic-slug>/evaluators/*.md")
+    print("- Final report: research-runs/<topic-slug>/final-report.md")
     print("\n## Research Tracks")
     for index, (title, objective) in enumerate(tracks, start=1):
         print(f"\n### Track {index}: {title}")
@@ -66,10 +74,20 @@ def main() -> None:
             Objective:
             <What this subagent should investigate.>
 
+            Artifact paths:
+            - Run folder:
+            - Source registry:
+            - Per-source files:
+            - Raw notes file:
+            - Compressed findings file:
+
             Research requirements:
             - Treat this as thorough research.
             - Do not stop after a few obvious sources.
             - Aim for 12-20 unique useful sources for broad tracks when available.
+            - Register every useful fetched link in the source registry.
+            - Create or update one per-source evidence file for every cited source.
+            - Do not include factual findings without a source tag that resolves to a URL.
 
             Questions to answer:
             1. <Question>
@@ -92,6 +110,10 @@ def main() -> None:
               - Sources found:
               - Source class:
               - Gaps remaining:
+            - Source registry updates:
+              - Source ID:
+              - URL:
+              - Claims supported:
             - Key findings:
             - Evidence and sources:
             - Conflicts or uncertainty:
@@ -113,6 +135,11 @@ def main() -> None:
             - Use Linkup as an additional recall/fetch path for high-value queries when available.
             - Merge provider outputs and deduplicate sources before reporting findings.
             - Continue with default web_search if optional provider keys are unavailable.
+
+            Evaluator gate:
+            - Run citation, source-quality, coverage, and contradiction audits before final delivery.
+            - When files are available, run:
+              python3 skills/sunlight-deepresearch/scripts/evaluate-source-coverage.py final-report.md --registry source-registry.md
             """
         ).strip()
     )

@@ -12,9 +12,9 @@ Use this template when synthesizing subagent findings into a final deliverable.
 <What was investigated and what was intentionally excluded.>
 
 ## Key Findings
-- <Finding with source or evidence note.>
-- <Finding with source or evidence note.>
-- <Finding with source or evidence note.>
+- <Finding with inline linked source or source tag.>
+- <Finding with inline linked source or source tag.>
+- <Finding with inline linked source or source tag.>
 
 ## Evidence Review
 <Summarize source quality, freshness, and coverage.>
@@ -35,9 +35,8 @@ Use this template when synthesizing subagent findings into a final deliverable.
 <High, medium, or low, with a short reason.>
 
 ## Sources
-- <Source>
-- <Source>
-- <Source>
+- [SRC_001] [<Title>](<https://...>)
+- [SRC_002] [<Title>](<https://...>)
 ```
 
 ## Synthesis Rules
@@ -48,7 +47,11 @@ Use this template when synthesizing subagent findings into a final deliverable.
 - Do not hide contradictions.
 - Keep recommendations traceable to findings.
 - Separate what sources say from what the agent infers.
-- Keep citation tags attached to factual claims until they are resolved into links or a final source list.
+- Every factual sentence should have an inline linked source or source tag.
+- Every key finding sentence must have an inline linked source or source tag.
+- Keep citation tags attached to factual claims until they are resolved into links and a final source list.
+- Do not write vague source labels such as "SEC filings", "earnings reports", or "developer surveys" without exact links.
+- Run `scripts/evaluate-source-coverage.py` before final delivery when a report file exists. If it fails, revise or research more instead of delivering.
 
 ## Strategy Rules
 - Add recommendations only when requested or when the research objective clearly supports a decision.
