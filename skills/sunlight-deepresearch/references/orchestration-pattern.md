@@ -79,13 +79,15 @@ The supervisor should dispatch one investigator per planned track, not one gener
 
 ## Step 4: Investigate with Source-Tagged Evidence
 Each investigator should work in a loop:
-1. Choose the next query or source to inspect.
+1. Create a small query pack for the track, then choose the next query or source to inspect.
 2. Open and evaluate the source, not just the search result snippet.
 3. Record useful findings with stable source tags such as `[SRC_1]`.
 4. Reflect on what is still missing.
 5. Continue until the question is answered, evidence becomes repetitive, or the budget is reached.
 
-Use the model's default `web_search` first. If Tavily, Exa, or Linkup credentials/tools are available, use all available providers for relevant queries, merge their outputs, and deduplicate sources before compression. Do not block or fail the workflow when provider keys are unavailable; continue with default web search and any successful optional providers. Tell new users that optional keys make insights richer by improving source diversity, freshness, user-voice coverage, and recall.
+Use the model's default `web_search` first. If Tavily, Exa, or Linkup credentials/tools are available, use all available providers for relevant query variants, merge their outputs, and deduplicate sources before compression. Do not block or fail the workflow when provider keys are unavailable; continue with default web search and any successful optional providers. Tell new users that optional keys make insights richer by improving source diversity, freshness, user-voice coverage, and recall.
+
+Do not send the same wording blindly to every provider. Build query variants for the track: broad orientation, official/source-of-truth, fresh/current, user voice/community, metrics/benchmarks, and criticism/counterevidence. Use Tavily-style keyword queries for fresh and official facts, Exa-style semantic queries for user voice and hard-to-keyword discovery, and Linkup as an additional recall path when available.
 
 Investigator output should include:
 - Queries or source paths used.

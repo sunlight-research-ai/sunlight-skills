@@ -71,6 +71,14 @@ def main() -> None:
             2. <Question>
             3. <Question>
 
+            Query plan:
+            - Orientation:
+            - Official/source-of-truth:
+            - Fresh/current:
+            - User voice/community:
+            - Metrics/benchmarks:
+            - Criticism/counterevidence:
+
             Output format:
             - Queries and sources used:
             - Key findings:
@@ -88,7 +96,10 @@ def main() -> None:
 
             Search provider guidance:
             - Start with default web_search.
-            - Use all available optional providers: Tavily, Exa, and Linkup when available.
+            - Create provider-appropriate query variants instead of sending the same wording to every provider.
+            - Use Tavily for exact/fresh/official keyword searches when available.
+            - Use Exa for semantic, community, sentiment, and quote-discovery searches when available.
+            - Use Linkup as an additional recall/fetch path for high-value queries when available.
             - Merge provider outputs and deduplicate sources before reporting findings.
             - Continue with default web_search if optional provider keys are unavailable.
             """

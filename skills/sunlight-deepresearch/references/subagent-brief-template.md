@@ -19,6 +19,7 @@ Questions to answer:
 Source requirements:
 - Start with the model's default web_search and its available source coverage.
 - Use all available optional providers: Tavily, Exa, and Linkup when their tools and credentials are configured.
+- Before searching, create provider-appropriate query variants instead of sending the same wording to every provider.
 - Continue with default web_search and any successful optional providers if one provider is unavailable or fails.
 - Merge provider outputs and deduplicate sources before reporting findings.
 - Use primary sources where available.
@@ -28,6 +29,14 @@ Source requirements:
 - Assign stable source tags like [SRC_1], [SRC_2] to useful sources.
 - Use the assigned source-tag range or prefix if provided.
 - Give the same source one stable source tag even if multiple providers return it.
+
+Query plan:
+- Orientation:
+- Official/source-of-truth:
+- Fresh/current:
+- User voice/community:
+- Metrics/benchmarks:
+- Criticism/counterevidence:
 
 Budget:
 - Maximum search/tool iterations:
