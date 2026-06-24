@@ -79,8 +79,6 @@ download_repo() {
   fi
 
   tmp_dir="$(mktemp -d)"
-  trap 'rm -rf "$tmp_dir"' EXIT
-
   if command -v git >/dev/null 2>&1; then
     git clone --depth 1 "$REPO_URL" "$tmp_dir/repo" >/dev/null 2>&1
   else
@@ -129,6 +127,10 @@ main() {
   if [[ "$installed_any" -eq 0 ]]; then
     echo "No install targets selected." >&2
     exit 1
+  fi
+
+  if [[ -z "${SUNLIGHT_SKILLS_SOURCE_DIR:-}" ]]; then
+    rm -rf "$(dirname "$repo_path")"
   fi
 
   cat <<'EOF'
