@@ -88,7 +88,8 @@ def main() -> None:
 
             Search provider guidance:
             - Start with default web_search.
-            - Use Tavily, Exa, or Linkup only when available.
+            - Use all available optional providers: Tavily, Exa, and Linkup when available.
+            - Merge provider outputs and deduplicate sources before reporting findings.
             - Continue with default web_search if optional provider keys are unavailable.
             """
         ).strip()

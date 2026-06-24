@@ -85,7 +85,7 @@ Each investigator should work in a loop:
 4. Reflect on what is still missing.
 5. Continue until the question is answered, evidence becomes repetitive, or the budget is reached.
 
-Use the model's default `web_search` first. If Tavily, Exa, or Linkup credentials/tools are available, use them as optional supplemental search surfaces rather than hard requirements. Do not block or fail the workflow when those provider keys are unavailable; continue with default web search and whatever sources the model can access.
+Use the model's default `web_search` first. If Tavily, Exa, or Linkup credentials/tools are available, use all available providers for relevant queries, merge their outputs, and deduplicate sources before compression. Do not block or fail the workflow when provider keys are unavailable; continue with default web search and any successful optional providers. Tell new users that optional keys make insights richer by improving source diversity, freshness, user-voice coverage, and recall.
 
 Investigator output should include:
 - Queries or source paths used.
@@ -97,7 +97,7 @@ Investigator output should include:
 
 Prefer primary sources when available, then credible secondary sources. For time-sensitive topics, favor recent sources and state the cutoff or recency assumption.
 
-Source tags must be unique across the full research run. In parallel workflows, either give each investigator a source-tag range or have the supervisor normalize source tags when merging outputs.
+Source tags must be unique across the full research run. In parallel workflows, either give each investigator a source-tag range or have the supervisor normalize source tags when merging outputs. Deduplicate sources by canonical URL first; when URL is unavailable, use normalized title, source name, and domain. A source returned by multiple providers should keep one source ID, not one ID per provider.
 
 ## Step 5: Compress Per-Investigator Findings
 Compress each investigator's raw notes before synthesis. The compressor's job is not to write the final report; it turns messy evidence into a clean, source-preserving summary for one track.

@@ -18,14 +18,16 @@ Questions to answer:
 
 Source requirements:
 - Start with the model's default web_search and its available source coverage.
-- Use Tavily, Exa, or Linkup only when the tool is available and credentials are configured.
-- Continue with default web_search if optional provider keys are unavailable.
+- Use all available optional providers: Tavily, Exa, and Linkup when their tools and credentials are configured.
+- Continue with default web_search and any successful optional providers if one provider is unavailable or fails.
+- Merge provider outputs and deduplicate sources before reporting findings.
 - Use primary sources where available.
 - Prefer current sources when the topic is time-sensitive.
 - Open and evaluate sources before relying on them.
 - Include links or citations for factual claims.
 - Assign stable source tags like [SRC_1], [SRC_2] to useful sources.
 - Use the assigned source-tag range or prefix if provided.
+- Give the same source one stable source tag even if multiple providers return it.
 
 Budget:
 - Maximum search/tool iterations:
@@ -49,4 +51,5 @@ Output format:
 - Require uncertainty notes.
 - Require source links when external facts are involved.
 - Require source tags to stay attached to claims.
+- Require provider outputs to be merged and deduplicated before findings are reported.
 - Ask for concise findings that are easy to merge.

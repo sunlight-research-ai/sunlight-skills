@@ -26,7 +26,7 @@ Default to the model's native `web_search` or equivalent browsing/search capabil
 - `EXA_API_KEY` for Exa semantic/community/forum/social-style search.
 - `LINKUP_API_KEY` for Linkup web search when installed in the user's environment.
 
-Optional providers should enrich coverage; they should not be required for the workflow to run. If a provider is missing, rate-limited, or returns errors, continue with default web search and record the limitation when it materially affects confidence.
+Optional providers should enrich coverage; they should not be required for the workflow to run. If a provider is missing, rate-limited, or returns errors, continue with default web search and any successful providers, then record the limitation when it materially affects confidence. When multiple providers are available, fan out relevant queries across all of them, merge results, and deduplicate by canonical URL first, then normalized title/source/domain.
 
 ## Durable State
 Persist enough state to resume, audit, cancel, retry, and explain the run:

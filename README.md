@@ -28,6 +28,29 @@ Supported targets:
 - `all` installs to all three
 - `auto` installs to detected directories, or all defaults when none exist
 
+
+## Optional API Keys for Richer Research
+
+`sunlight-deepresearch` works without external search API keys by using your agent or model's default `web_search`. For richer research, add provider keys for Tavily, Exa, and Linkup. When these tools are available, the skill tells agents to use all available providers, merge the results, and deduplicate sources before synthesis.
+
+Optional keys:
+
+| Provider | Environment variable | Where to get a key | Best for |
+|----------|----------------------|--------------------|----------|
+| Tavily | `TAVILY_API_KEY` | [Tavily Platform](https://app.tavily.com/) / [Quickstart](https://docs.tavily.com/documentation/quickstart) | Fresh keyword search, news, product pages, pricing pages, changelogs, release notes |
+| Exa | `EXA_API_KEY` | [Exa Dashboard](https://dashboard.exa.ai/) / [Docs](https://exa.ai/docs/reference/getting-started) | Semantic search, community threads, user sentiment, quote retrieval |
+| Linkup | `LINKUP_API_KEY` | [Linkup app](https://app.linkup.so/) / [Docs](https://docs.linkup.so/) | Additional web coverage and AI-oriented search/fetch/research workflows |
+
+Set keys in your shell before starting your agent session:
+
+```bash
+export TAVILY_API_KEY="..."
+export EXA_API_KEY="..."
+export LINKUP_API_KEY="..."
+```
+
+You can also copy `.env.example` as a local reference, but do not commit real API keys. Restart Codex, Claude Code, or OpenCode after setting environment variables so the agent can see them.
+
 ## Manual Installation
 
 Clone the repository:
