@@ -71,13 +71,15 @@ Set explicit budgets before dispatch:
 - Maximum number of investigator subagents.
 - Maximum search or tool iterations per investigator.
 - Recency expectations.
-- Minimum useful source threshold.
+- Minimum useful source threshold: for broad tracks, aim for 12-20 unique useful sources when available.
 - Time or token limit.
 - Failure condition for low-quality or unavailable sources.
 
 The supervisor should dispatch one investigator per planned track, not one generalist subagent for the whole report. If there are more tracks than available parallel slots, queue the remaining tracks for the next dispatch round.
 
 ## Step 4: Investigate with Source-Tagged Evidence
+Every investigator should treat the assignment as thorough research. The goal is not to find a few plausible sources; it is to check the source classes and query angles needed for the track.
+
 Each investigator should work in a loop:
 1. Create a small query pack for the track, then choose the next query or source to inspect.
 2. Open and evaluate the source, not just the search result snippet.
@@ -89,8 +91,11 @@ Use the model's default `web_search` first. If Tavily, Exa, or Linkup credential
 
 Do not send the same wording blindly to every provider. Build query variants for the track: broad orientation, official/source-of-truth, fresh/current, user voice/community, metrics/benchmarks, and criticism/counterevidence. Use Tavily-style keyword queries for fresh and official facts, Exa-style semantic queries for user voice and hard-to-keyword discovery, and Linkup as an additional recall path when available.
 
+Do not stop just because the first results are obvious or because several sources repeat the same fact. If coverage is thin, pivot query framing before synthesis: change aliases, source type, timeframe, geography, positive or negative framing, metric names, community surfaces, or provider. Stop only when the relevant query categories have been attempted, source classes have been checked, counterevidence has been searched for, and additional searching is unlikely to change the answer.
+
 Investigator output should include:
 - Queries or source paths used.
+- Coverage matrix: query type, queries attempted, sources found, source class, gaps remaining.
 - Key findings.
 - Source tags with links or source names.
 - Conflicts or uncertainty.

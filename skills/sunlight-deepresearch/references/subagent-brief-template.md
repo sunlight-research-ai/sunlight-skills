@@ -17,6 +17,7 @@ Questions to answer:
 3. <Question>
 
 Source requirements:
+- Treat this as thorough research; do not do a shallow search pass.
 - Start with the model's default web_search and its available source coverage.
 - Use all available optional providers: Tavily, Exa, and Linkup when their tools and credentials are configured.
 - Before searching, create provider-appropriate query variants instead of sending the same wording to every provider.
@@ -29,6 +30,7 @@ Source requirements:
 - Assign stable source tags like [SRC_1], [SRC_2] to useful sources.
 - Use the assigned source-tag range or prefix if provided.
 - Give the same source one stable source tag even if multiple providers return it.
+- Aim for 12-20 unique useful sources for broad tracks when available; if fewer, explain source scarcity and the searches attempted.
 
 Query plan:
 - Orientation:
@@ -41,11 +43,17 @@ Query plan:
 Budget:
 - Maximum search/tool iterations:
 - Optional provider budget:
-- Minimum useful sources:
-- Stop condition:
+- Minimum useful sources: 12-20 unique useful sources for broad tracks when available.
+- Stop condition: all relevant query-plan categories attempted, source classes checked, counterevidence searched, contradictions documented, and additional searching unlikely to change the answer.
 
 Output format:
 - Queries and sources used:
+- Coverage matrix:
+  - Query type:
+  - Queries attempted:
+  - Sources found:
+  - Source class:
+  - Gaps remaining:
 - Key findings:
 - Evidence and sources:
 - Conflicts or uncertainty:

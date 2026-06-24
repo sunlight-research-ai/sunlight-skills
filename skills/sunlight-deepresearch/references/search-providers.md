@@ -28,6 +28,26 @@ Do not ask for keys before starting every task. Mention them when onboarding a n
 - If one provider fails or is missing, continue with the successful providers and default `web_search`.
 - Record provider failures only when they reduce confidence or leave a material gap.
 
+## Thorough Search Standard
+Every `sunlight-deepresearch` investigation should be thorough. Do not run a shallow search pass.
+
+For each broad research track, aim for 12-20 unique useful sources when the web has enough material. Use fewer only when the investigator records scarcity and the specific query variants attempted.
+
+Do not stop just because:
+- 3 sources were found.
+- the first page of results looks plausible.
+- multiple sources repeat the same obvious fact.
+- default `web_search` returned a concise answer.
+
+Stop only when:
+- the relevant query-pack categories have been attempted,
+- at least three distinct source classes have been checked when applicable,
+- counterevidence or criticism has been searched for,
+- important contradictions have been resolved or documented,
+- another query is unlikely to change the answer.
+
+When results are too few, too obvious, or too homogeneous, pivot instead of synthesizing. Change at least one of: entity alias, source type, timeframe, geography, positive/negative framing, metric name, community surface, or provider.
+
 ## Query Strategy
 Do not send the same query blindly to every provider. For each research track, create a small query pack before searching. Fill only the query types that fit the task:
 

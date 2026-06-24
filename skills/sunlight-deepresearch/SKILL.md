@@ -17,18 +17,28 @@ Run deep research as a disciplined subagent orchestration workflow: decompose th
 
 ## When NOT to Use
 - Do not use for simple factual questions that can be answered directly with one reliable source.
-- Do not use when the user explicitly asks for a quick answer and does not want a research process.
+- Do not use when the user explicitly wants a direct answer without a research process.
 - Do not require LangGraph, a codebase, a database, or a hosted backend unless the user asks to build a durable app.
 
 ## Contract
 - Do not answer broad research questions from a single pass when subagents are available.
+- Treat every `sunlight-deepresearch` run as thorough research; do not offer lighter modes.
 - Break the objective into independent research tracks before dispatching work.
 - Give each subagent a narrow brief, explicit output shape, and source/evidence requirements.
+- Require each investigator to complete a full query sweep and coverage check before stopping.
 - Ask subagents to separate evidence, inference, uncertainty, and open questions.
 - Synthesize only after reviewing the returned findings.
 - Resolve conflicts with targeted follow-up research instead of smoothing them over.
 - Run a final verifier or critic pass before presenting the final report.
 - State limitations, confidence, and unresolved questions in the final output.
+
+## Thoroughness Rules
+- Default to thorough coverage whenever this skill is used.
+- Do not stop because the first sources are obvious or because a few sources agree.
+- Aim for 12-20 unique useful sources per broad track when available; use fewer only when the investigator documents scarcity and the searches attempted.
+- Require source diversity where relevant: official or primary sources, reputable secondary sources, user/community sources, data or benchmark sources, and counterevidence.
+- If results are too obvious, repetitive, or vendor/SEO-heavy, change query framing, source type, timeframe, geography, or provider before synthesizing.
+- Stop only after the track's query sweep is attempted, source diversity is adequate, contradictions are checked, and further searches are unlikely to change the answer.
 
 ## Workflow
 1. Create a research brief using `references/research-brief-template.md`: objective, audience, decision context, entities, timeframe, source requirements, exclusions, output format, and success criteria. If the request is not clear enough to decompose, ask one concise clarifying question before dispatching subagents.

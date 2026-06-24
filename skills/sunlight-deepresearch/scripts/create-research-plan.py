@@ -66,6 +66,11 @@ def main() -> None:
             Objective:
             <What this subagent should investigate.>
 
+            Research requirements:
+            - Treat this as thorough research.
+            - Do not stop after a few obvious sources.
+            - Aim for 12-20 unique useful sources for broad tracks when available.
+
             Questions to answer:
             1. <Question>
             2. <Question>
@@ -81,6 +86,12 @@ def main() -> None:
 
             Output format:
             - Queries and sources used:
+            - Coverage matrix:
+              - Query type:
+              - Queries attempted:
+              - Sources found:
+              - Source class:
+              - Gaps remaining:
             - Key findings:
             - Evidence and sources:
             - Conflicts or uncertainty:
@@ -91,8 +102,8 @@ def main() -> None:
             Budget:
             - Maximum search/tool iterations:
             - Optional provider budget:
-            - Minimum useful sources:
-            - Stop condition:
+            - Minimum useful sources: 12-20 unique useful sources for broad tracks when available.
+            - Stop condition: all relevant query-plan categories attempted, source classes checked, counterevidence searched, contradictions documented, and additional searching unlikely to change the answer.
 
             Search provider guidance:
             - Start with default web_search.
