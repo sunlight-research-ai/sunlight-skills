@@ -65,6 +65,31 @@ The strategy recommendation is grounded in linked evidence [SRC_001].
         self.assertEqual(result["coverage"], 1)
         self.assertEqual(result["source_count"], 1)
 
+    def test_trailing_source_tag_after_sentence_punctuation_passes(self):
+        evaluator = load_module()
+        report = """
+# Report
+
+## Executive Summary
+Figma should own product context. [SRC_001]
+
+## Key Findings
+- Figma Make can use design references. [SRC_001]
+"""
+        registry = """
+| Source ID | Title | URL |
+|-----------|-------|-----|
+| [SRC_001] | Figma Make | https://www.theverge.com/news/712995/figma-make-ai-general-availability-announcement |
+"""
+        result = evaluator.evaluate(
+            report,
+            registry,
+            min_sentence_coverage=0.85,
+            require_key_findings=True,
+        )
+        self.assertTrue(result["passed"])
+        self.assertEqual(result["coverage"], 1)
+
 
 if __name__ == "__main__":
     unittest.main()

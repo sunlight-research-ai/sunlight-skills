@@ -23,6 +23,14 @@ SOURCE_DEF_RE = re.compile(
     r"\[(SRC[_-]?\d+)\][^\n]*(https?://[^\s)<>\]]+)", re.IGNORECASE
 )
 SENTENCE_RE = re.compile(r"[^.!?\n]+[.!?](?=\s|$)")
+TRAILING_SOURCE_RE = re.compile(
+    r"(?:\s+(?:"
+    r"\[[^\]]+\]\(https?://[^)\s]+(?:\s+\"[^\"]*\")?\)"
+    r"|https?://[^\s)<>\]]+"
+    r"|\[(?:SRC[_-]?\d+)\]"
+    r"))+",
+    re.IGNORECASE,
+)
 
 
 def read_text(path: str) -> str:
@@ -72,7 +80,9 @@ def sentences_by_section(text: str) -> list[dict[str, str]]:
         if current in {"sources", "bibliography", "source-registry", "source-registry-md"}:
             continue
         for match in SENTENCE_RE.finditer(stripped):
-            sentence = " ".join(match.group(0).split())
+            citation_tail = TRAILING_SOURCE_RE.match(stripped, match.end())
+            end = citation_tail.end() if citation_tail else match.end()
+            sentence = " ".join(stripped[match.start() : end].split())
             if len(sentence.split()) < 5:
                 continue
             out.append({"section": current, "sentence": sentence})
