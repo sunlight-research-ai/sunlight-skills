@@ -41,12 +41,24 @@ Optional keys:
 | Exa | `EXA_API_KEY` | [Exa Dashboard](https://dashboard.exa.ai/) / [Docs](https://exa.ai/docs/reference/getting-started) | Semantic search, community threads, user sentiment, quote retrieval |
 | Linkup | `LINKUP_API_KEY` | [Linkup app](https://app.linkup.so/) / [Docs](https://docs.linkup.so/) | Additional web coverage and AI-oriented search/fetch/research workflows |
 
-Set keys in your shell before starting your agent session:
+Set keys in your shell before starting your agent session. Codex, Claude Code, and OpenCode consume environment variables from the process that launches them; exporting keys after an agent is already running will not reach that session.
 
 ```bash
 export TAVILY_API_KEY="..."
 export EXA_API_KEY="..."
 export LINKUP_API_KEY="..."
+```
+
+For Codex CLI, launch Codex from the same shell:
+
+```bash
+codex --search
+```
+
+Or run one Codex session with keys inline:
+
+```bash
+TAVILY_API_KEY="..." EXA_API_KEY="..." LINKUP_API_KEY="..." codex --search
 ```
 
 You can also copy `.env.example` as a local reference, but do not commit real API keys. Restart Codex, Claude Code, or OpenCode after setting environment variables so the agent can see them.
@@ -103,4 +115,3 @@ Before opening a PR, read [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 MIT. See [LICENSE](LICENSE).
-

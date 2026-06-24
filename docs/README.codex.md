@@ -24,12 +24,21 @@ Restart Codex or start a new session, then ask Codex to use `sunlight-deepresear
 
 ## Optional API keys
 
-`sunlight-deepresearch` works with the default `web_search` available to your agent. For richer source coverage, optionally set provider keys before starting your session:
+`sunlight-deepresearch` works with the default `web_search` available to your agent. For richer source coverage, optionally set provider keys before starting Codex.
+
+Codex consumes environment variables from the process that launches it. Exporting keys after Codex is already running will not reach that session.
 
 ```bash
 export TAVILY_API_KEY="..."
 export EXA_API_KEY="..."
 export LINKUP_API_KEY="..."
+codex --search
+```
+
+Or run one Codex session with keys inline:
+
+```bash
+TAVILY_API_KEY="..." EXA_API_KEY="..." LINKUP_API_KEY="..." codex --search
 ```
 
 Get keys here:
@@ -39,4 +48,3 @@ Get keys here:
 - Linkup: [app.linkup.so](https://app.linkup.so/) / [docs](https://docs.linkup.so/)
 
 When optional providers are available, the skill uses them alongside default web search, merges results, and deduplicates sources before synthesis.
-

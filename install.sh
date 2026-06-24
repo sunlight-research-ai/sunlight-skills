@@ -137,6 +137,30 @@ main() {
 
 Done.
 
+Optional: add search API keys for richer research.
+
+sunlight-deepresearch works now with your agent's default web_search.
+For richer results, add any of these before starting your agent session:
+
+  export TAVILY_API_KEY="..."
+  export EXA_API_KEY="..."
+  export LINKUP_API_KEY="..."
+
+For Codex CLI, launch Codex from the same shell so it can consume the keys:
+
+  codex --search
+
+Or run one Codex session with keys inline:
+
+  TAVILY_API_KEY="..." EXA_API_KEY="..." LINKUP_API_KEY="..." codex --search
+
+Get keys:
+  Tavily: https://app.tavily.com/
+  Exa:    https://dashboard.exa.ai/
+  Linkup: https://app.linkup.so/
+
+If your agent is already open, restart Codex, Claude Code, or OpenCode after setting keys.
+
 Try:
   Use the sunlight-deepresearch skill to run deep research on a topic.
 EOF
