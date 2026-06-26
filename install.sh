@@ -207,39 +207,6 @@ tty_read() {
   printf -v "$__var" '%s' "$value"
 }
 
-tty_read_secret() {
-  local __var="$1"
-  local tty
-  local value=""
-  local char=""
-  tty="$(tty_path)"
-  if [[ -r "$tty" && -w "$tty" ]]; then
-    while IFS= read -r -s -n 1 char <"$tty"; do
-      case "$char" in
-        "")
-          break
-          ;;
-        $'\n'|$'\r')
-          break
-          ;;
-        $'\177'|$'\b')
-          if [[ -n "$value" ]]; then
-            value="${value%?}"
-            tty_print $'\b \b'
-          fi
-          ;;
-        *)
-          value+="$char"
-          tty_print "*"
-          ;;
-      esac
-    done
-  else
-    IFS= read -r value || value=""
-  fi
-  printf -v "$__var" '%s' "$value"
-}
-
 prompt_yes_no() {
   local prompt="$1"
   local default="${2:-Y}"
@@ -275,8 +242,7 @@ prompt_secret() {
   local prompt="$2"
   local secret_value=""
   tty_print "$(accent "$prompt")"
-  tty_read_secret secret_value
-  tty_println ""
+  tty_read secret_value
   printf -v "$__var" '%s' "$secret_value"
 }
 
@@ -394,6 +360,7 @@ run_api_key_setup_python() {
   python3 <<'PY'
 import os
 import re
+import select
 import shlex
 import sys
 import termios
@@ -404,17 +371,19 @@ TTY_PATH = os.environ.get("SUNLIGHT_SKILLS_TTY", "/dev/tty")
 
 
 try:
-    tty_in = open(TTY_PATH, "r", encoding="utf-8", buffering=1)
-    tty_out = open(TTY_PATH, "w", encoding="utf-8", buffering=1)
+    tty_in = open(TTY_PATH, "rb", buffering=0)
+    tty_out = open(TTY_PATH, "wb", buffering=0)
 except OSError:
     sys.exit(2)
+
+tty_fd = tty_in.fileno()
 
 
 def supports_color() -> bool:
     force = os.environ.get("FORCE_COLOR", "")
     if force and force != "0":
         return True
-    return not os.environ.get("NO_COLOR") and tty_out.isatty()
+    return not os.environ.get("NO_COLOR") and os.isatty(tty_fd)
 
 
 def style(code: str, text: str) -> str:
@@ -444,55 +413,76 @@ def warn(text: str) -> str:
 
 
 def println(text: str = "") -> None:
-    tty_out.write(f"{text}\n")
+    write(f"{text}\n")
+
+
+def write(text: str) -> None:
+    tty_out.write(text.encode("utf-8"))
     tty_out.flush()
+
+
+def read_byte() -> bytes:
+    return os.read(tty_fd, 1)
+
+
+def drain_pending_input() -> None:
+    while True:
+        ready, _, _ = select.select([tty_fd], [], [], 0.03)
+        if not ready:
+            return
+        read_byte()
 
 
 def prompt_yes_no(prompt: str, default: bool = True) -> bool:
     suffix = "[Y/n]" if default else "[y/N]"
     while True:
-        tty_out.write(f"{accent(prompt)} {muted(suffix)} ")
-        tty_out.flush()
-        answer = tty_in.readline()
-        if answer == "":
+        write(f"{accent(prompt)} {muted(suffix)} ")
+        old_attrs = termios.tcgetattr(tty_fd)
+        try:
+            tty.setraw(tty_fd)
+            ch = read_byte()
+        finally:
+            termios.tcsetattr(tty_fd, termios.TCSADRAIN, old_attrs)
+        if ch in {b"\r", b"\n", b""}:
+            println()
+            drain_pending_input()
             return default
-        answer = answer.strip().lower()
-        if not answer:
-            return default
-        if answer in {"y", "yes"}:
+        if ch == b"\x03":
+            raise KeyboardInterrupt
+        if ch in {b"y", b"Y"}:
+            println("y")
+            drain_pending_input()
             return True
-        if answer in {"n", "no"}:
+        if ch in {b"n", b"N"}:
+            println("n")
+            drain_pending_input()
             return False
         println(warn("Please answer y or n."))
 
 
 def prompt_secret(prompt: str) -> str:
-    tty_out.write(accent(prompt))
-    tty_out.flush()
-    fd = tty_in.fileno()
-    old_attrs = termios.tcgetattr(fd)
-    value = []
+    write(accent(prompt))
+    old_attrs = termios.tcgetattr(tty_fd)
+    value = bytearray()
     try:
-        tty.setraw(fd)
+        tty.setraw(tty_fd)
         while True:
-            ch = tty_in.read(1)
-            if ch in {"\r", "\n", ""}:
+            ch = read_byte()
+            if ch in {b"\r", b"\n", b""}:
                 break
-            if ch == "\x03":
+            if ch == b"\x03":
                 raise KeyboardInterrupt
-            if ch in {"\x7f", "\b"}:
+            if ch in {b"\x7f", b"\b"}:
                 if value:
                     value.pop()
-                    tty_out.write("\b \b")
-                    tty_out.flush()
+                    write("\b \b")
                 continue
-            value.append(ch)
-            tty_out.write("*")
-            tty_out.flush()
+            value.extend(ch)
+            write("*")
     finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_attrs)
+        termios.tcsetattr(tty_fd, termios.TCSADRAIN, old_attrs)
         println()
-    return "".join(value)
+    return value.decode("utf-8", errors="ignore")
 
 
 def redacted_preview(value: str) -> str:
