@@ -137,6 +137,43 @@ has_tty() {
   [[ -r "$tty" && -w "$tty" ]] || [[ -t 0 && -t 1 ]]
 }
 
+supports_color() {
+  if [[ -n "${FORCE_COLOR:-}" && "${FORCE_COLOR:-}" != "0" ]]; then
+    return 0
+  fi
+  [[ -z "${NO_COLOR:-}" ]] && has_tty
+}
+
+style() {
+  local code="$1"
+  local text="$2"
+  if supports_color; then
+    printf '\033[%sm%s\033[0m' "$code" "$text"
+  else
+    printf '%s' "$text"
+  fi
+}
+
+heading() {
+  style "1;36" "$1"
+}
+
+accent() {
+  style "36" "$1"
+}
+
+muted() {
+  style "2" "$1"
+}
+
+success() {
+  style "32" "$1"
+}
+
+warn() {
+  style "33" "$1"
+}
+
 tty_print() {
   local tty
   tty="$(tty_path)"
@@ -210,7 +247,7 @@ prompt_yes_no() {
   fi
 
   while true; do
-    tty_print "$prompt $suffix "
+    tty_print "$(accent "$prompt") $(muted "$suffix") "
     tty_read answer
     case "$answer" in
       "")
@@ -224,7 +261,7 @@ prompt_yes_no() {
         return 1
         ;;
       *)
-        tty_println "Please answer y or n."
+        tty_println "$(warn "Please answer y or n.")"
         ;;
     esac
   done
@@ -234,7 +271,7 @@ prompt_secret() {
   local __var="$1"
   local prompt="$2"
   local secret_value=""
-  tty_print "$prompt"
+  tty_print "$(accent "$prompt")"
   tty_read_secret secret_value
   tty_println ""
   printf -v "$__var" '%s' "$secret_value"
@@ -321,31 +358,31 @@ prompt_provider_key() {
   local value=""
 
   tty_println ""
-  tty_println "$provider"
-  tty_println "$description"
-  tty_println "Get a key: $url"
+  tty_println "$(heading "$provider")"
+  tty_println "$(muted "$description")"
+  tty_println "$(muted "Get a key: $url")"
   tty_println ""
 
   if [[ -n "$existing" ]]; then
     if prompt_yes_no "Use existing $env_var ($(redacted_preview "$existing"))?" "Y"; then
-      tty_println "Saved $provider."
+      tty_println "$(success "Saved $provider.")"
       printf -v "$__var" '%s' "$existing"
       return
     fi
   elif ! prompt_yes_no "Set up $provider now?" "Y"; then
-    tty_println "Skipped $provider."
+    tty_println "$(warn "Skipped $provider.")"
     printf -v "$__var" ''
     return
   fi
 
   prompt_secret value "Enter $env_var: "
   if [[ -z "$value" ]]; then
-    tty_println "Skipped $provider."
+    tty_println "$(warn "Skipped $provider.")"
     printf -v "$__var" ''
     return
   fi
 
-  tty_println "Saved $provider."
+  tty_println "$(success "Saved $provider.")"
   printf -v "$__var" '%s' "$value"
 }
 
@@ -366,10 +403,10 @@ EOF
   fi
 
   tty_println ""
-  tty_println "Sunlight research setup"
+  tty_println "$(heading "Sunlight research setup")"
   tty_println ""
-  tty_println "Optional search providers make sunlight-deepresearch more thorough."
-  tty_println "You can skip any provider and still use default web_search."
+  tty_println "$(muted "Optional search providers make sunlight-deepresearch more thorough.")"
+  tty_println "$(muted "You can skip any provider and still use default web_search.")"
 
   prompt_provider_key linkup_key "Linkup" "LINKUP_API_KEY" "Additional web search, fetch, and AI-oriented research coverage." "https://app.linkup.so/"
   prompt_provider_key exa_key "Exa" "EXA_API_KEY" "Semantic search, community threads, user sentiment, and quote retrieval." "https://dashboard.exa.ai/"
@@ -377,7 +414,7 @@ EOF
 
   if [[ -z "$linkup_key" && -z "$exa_key" && -z "$tavily_key" ]]; then
     tty_println ""
-    tty_println "No API keys saved. sunlight-deepresearch will use default web_search."
+    tty_println "$(warn "No API keys saved. sunlight-deepresearch will use default web_search.")"
     return
   fi
 
@@ -385,15 +422,15 @@ EOF
   write_api_key_block "$profile" "$linkup_key" "$exa_key" "$tavily_key"
 
   tty_println ""
-  tty_println "Saved API key exports to:"
+  tty_println "$(success "Saved API key exports to:")"
   tty_println "  $profile"
   tty_println ""
-  tty_println "Next:"
+  tty_println "$(heading "Next:")"
   tty_println "  source $profile"
   tty_println ""
   tty_println "Then start your agent from that shell."
   tty_println ""
-  tty_println "For Codex:"
+  tty_println "$(heading "For Codex:")"
   tty_println "  codex --search"
   tty_println ""
   tty_println "sunlight-deepresearch will use default web_search plus any configured providers, then merge and deduplicate sources."
