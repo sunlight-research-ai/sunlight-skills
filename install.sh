@@ -389,11 +389,242 @@ prompt_provider_key() {
   printf -v "$__var" '%s' "$value"
 }
 
+run_api_key_setup_python() {
+  command -v python3 >/dev/null 2>&1 || return 2
+  python3 <<'PY'
+import os
+import re
+import shlex
+import sys
+import termios
+import tty
+
+
+TTY_PATH = os.environ.get("SUNLIGHT_SKILLS_TTY", "/dev/tty")
+
+
+try:
+    tty_in = open(TTY_PATH, "r", encoding="utf-8", buffering=1)
+    tty_out = open(TTY_PATH, "w", encoding="utf-8", buffering=1)
+except OSError:
+    sys.exit(2)
+
+
+def supports_color() -> bool:
+    force = os.environ.get("FORCE_COLOR", "")
+    if force and force != "0":
+        return True
+    return not os.environ.get("NO_COLOR") and tty_out.isatty()
+
+
+def style(code: str, text: str) -> str:
+    if supports_color():
+        return f"\033[{code}m{text}\033[0m"
+    return text
+
+
+def heading(text: str) -> str:
+    return style("1;36", text)
+
+
+def accent(text: str) -> str:
+    return style("36", text)
+
+
+def muted(text: str) -> str:
+    return style("2", text)
+
+
+def success(text: str) -> str:
+    return style("32", text)
+
+
+def warn(text: str) -> str:
+    return style("33", text)
+
+
+def println(text: str = "") -> None:
+    tty_out.write(f"{text}\n")
+    tty_out.flush()
+
+
+def prompt_yes_no(prompt: str, default: bool = True) -> bool:
+    suffix = "[Y/n]" if default else "[y/N]"
+    while True:
+        tty_out.write(f"{accent(prompt)} {muted(suffix)} ")
+        tty_out.flush()
+        answer = tty_in.readline()
+        if answer == "":
+            return default
+        answer = answer.strip().lower()
+        if not answer:
+            return default
+        if answer in {"y", "yes"}:
+            return True
+        if answer in {"n", "no"}:
+            return False
+        println(warn("Please answer y or n."))
+
+
+def prompt_secret(prompt: str) -> str:
+    tty_out.write(accent(prompt))
+    tty_out.flush()
+    fd = tty_in.fileno()
+    old_attrs = termios.tcgetattr(fd)
+    value = []
+    try:
+        tty.setraw(fd)
+        while True:
+            ch = tty_in.read(1)
+            if ch in {"\r", "\n", ""}:
+                break
+            if ch == "\x03":
+                raise KeyboardInterrupt
+            if ch in {"\x7f", "\b"}:
+                if value:
+                    value.pop()
+                    tty_out.write("\b \b")
+                    tty_out.flush()
+                continue
+            value.append(ch)
+            tty_out.write("*")
+            tty_out.flush()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_attrs)
+        println()
+    return "".join(value)
+
+
+def redacted_preview(value: str) -> str:
+    if len(value) <= 8:
+        return "set"
+    return f"{value[:4]}...{value[-4:]}"
+
+
+def profile_path() -> str:
+    home = os.environ.get("HOME", os.path.expanduser("~"))
+    shell = os.path.basename(os.environ.get("SHELL", ""))
+    if shell == "zsh":
+        return os.path.join(home, ".zshrc")
+    if shell == "bash":
+        return os.path.join(home, ".bashrc")
+    zshrc = os.path.join(home, ".zshrc")
+    bashrc = os.path.join(home, ".bashrc")
+    if os.path.exists(zshrc):
+        return zshrc
+    if os.path.exists(bashrc):
+        return bashrc
+    return os.path.join(home, ".profile")
+
+
+def write_api_key_block(profile: str, values) -> None:
+    os.makedirs(os.path.dirname(profile), exist_ok=True)
+    existing = ""
+    if os.path.exists(profile):
+        with open(profile, "r", encoding="utf-8") as f:
+            existing = f.read()
+    existing = re.sub(
+        r"\n?# >>> sunlight-skills api keys >>>\n.*?\n# <<< sunlight-skills api keys <<<\n?",
+        "\n",
+        existing,
+        flags=re.S,
+    ).rstrip()
+    lines = ["", "# >>> sunlight-skills api keys >>>"]
+    for env_var in ["LINKUP_API_KEY", "EXA_API_KEY", "TAVILY_API_KEY"]:
+        value = values.get(env_var, "")
+        if value:
+            lines.append(f"export {env_var}={shlex.quote(value)}")
+        else:
+            lines.append(f"# {env_var} skipped")
+    lines.append("# <<< sunlight-skills api keys <<<")
+    next_text = existing + "\n".join(lines) + "\n"
+    with open(profile, "w", encoding="utf-8") as f:
+        f.write(next_text)
+
+
+def provider_flow(name: str, env_var: str, description: str, url: str) -> str:
+    println()
+    println(heading(name))
+    println(muted(description))
+    println(muted(f"Get a key: {url}"))
+    println()
+    existing = os.environ.get(env_var, "")
+    if existing:
+        if prompt_yes_no(f"Use existing {env_var} ({redacted_preview(existing)})?", True):
+            println(success(f"Saved {name}."))
+            return existing
+    elif not prompt_yes_no(f"Set up {name} now?", True):
+        println(warn(f"Skipped {name}."))
+        return ""
+    value = prompt_secret(f"Enter {env_var}: ")
+    if not value:
+        println(warn(f"Skipped {name}."))
+        return ""
+    println(success(f"Saved {name}."))
+    return value
+
+
+try:
+    println()
+    println(heading("Sunlight research setup"))
+    println()
+    println(muted("Optional search providers make sunlight-deepresearch more thorough."))
+    println(muted("You can skip any provider and still use default web_search."))
+
+    values = {
+        "LINKUP_API_KEY": provider_flow(
+            "Linkup",
+            "LINKUP_API_KEY",
+            "Additional web search, fetch, and AI-oriented research coverage.",
+            "https://app.linkup.so/",
+        ),
+        "EXA_API_KEY": provider_flow(
+            "Exa",
+            "EXA_API_KEY",
+            "Semantic search, community threads, user sentiment, and quote retrieval.",
+            "https://dashboard.exa.ai/",
+        ),
+        "TAVILY_API_KEY": provider_flow(
+            "Tavily",
+            "TAVILY_API_KEY",
+            "Fresh web, news, product pages, changelogs, and release notes.",
+            "https://app.tavily.com/",
+        ),
+    }
+
+    if not any(values.values()):
+        println()
+        println(warn("No API keys saved. sunlight-deepresearch will use default web_search."))
+        sys.exit(0)
+
+    profile = profile_path()
+    write_api_key_block(profile, values)
+    println()
+    println(success("Saved API key exports to:"))
+    println(f"  {profile}")
+    println()
+    println(heading("Next:"))
+    println(f"  source {profile}")
+    println()
+    println("Then start your agent from that shell.")
+    println()
+    println(heading("For Codex:"))
+    println("  codex --search")
+    println()
+    println("sunlight-deepresearch will use default web_search plus any configured providers, then merge and deduplicate sources.")
+except KeyboardInterrupt:
+    println()
+    println(warn("API key setup cancelled."))
+    sys.exit(1)
+PY
+}
+
 run_api_key_setup() {
   local linkup_key=""
   local exa_key=""
   local tavily_key=""
   local profile=""
+  local setup_status=0
 
   if ! has_tty; then
     cat <<'EOF'
@@ -403,6 +634,15 @@ Run later with:
   curl -fsSL https://raw.githubusercontent.com/sunlight-research-ai/sunlight-skills/main/install.sh | bash -s -- --api-key-setup-only
 EOF
     return
+  fi
+
+  if run_api_key_setup_python; then
+    return
+  else
+    setup_status=$?
+    if [[ "$setup_status" -ne 2 ]]; then
+      return "$setup_status"
+    fi
   fi
 
   tty_println ""
