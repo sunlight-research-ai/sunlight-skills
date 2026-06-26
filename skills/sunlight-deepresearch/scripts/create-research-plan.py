@@ -129,7 +129,11 @@ def main() -> None:
 
             Search provider guidance:
             - Start with default web_search.
+            - Before dispatch, check configured providers:
+              python3 skills/sunlight-deepresearch/scripts/search-providers.py --check
             - Create provider-appropriate query variants instead of sending the same wording to every provider.
+            - If optional provider tools are not exposed directly, use the bundled provider script:
+              python3 skills/sunlight-deepresearch/scripts/search-providers.py "<query>" --provider all --json
             - Use Tavily for exact/fresh/official keyword searches when available.
             - Use Exa for semantic, community, sentiment, and quote-discovery searches when available.
             - Use Linkup as an additional recall/fetch path for high-value queries when available.

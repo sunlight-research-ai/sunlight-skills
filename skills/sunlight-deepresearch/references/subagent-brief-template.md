@@ -27,6 +27,8 @@ Source requirements:
 - Treat this as thorough research; do not do a shallow search pass.
 - Start with the model's default web_search and its available source coverage.
 - Use all available optional providers: Linkup, Exa, and Tavily when their tools and credentials are configured.
+- If optional provider tools are not exposed directly, use the bundled provider script from the run folder or installed skill path:
+  `python3 skills/sunlight-deepresearch/scripts/search-providers.py "<query>" --provider all --json`
 - Before searching, create provider-appropriate query variants instead of sending the same wording to every provider.
 - Continue with default web_search and any successful optional providers if one provider is unavailable or fails.
 - Merge provider outputs and deduplicate sources before reporting findings.

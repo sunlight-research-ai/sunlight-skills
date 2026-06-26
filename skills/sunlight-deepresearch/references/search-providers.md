@@ -18,11 +18,29 @@ Use optional providers when the runtime has the provider tool installed and the 
 
 Do not ask for keys before starting every task. Mention them when onboarding a new user, when research quality matters, or when optional providers are missing and richer coverage would materially help.
 
+Before dispatching investigators, check what the current runtime can actually use:
+
+```bash
+python3 skills/sunlight-deepresearch/scripts/search-providers.py --check
+```
+
+If the skill is installed outside the current project, use the installed path, for example:
+
+```bash
+python3 ~/.codex/skills/sunlight-deepresearch/scripts/search-providers.py --check
+```
+
+The provider script reads keys from the live process environment first, then common env files and shell exports: `SUNLIGHT_SEARCH_ENV`, `.env`, `.env.local`, `.sunlight.env`, `~/.sunlight-skills.env`, `~/.zshrc`, `~/.bashrc`, and `~/.profile`. This lets a running agent use keys saved by the installer or stored in a project env file even if the agent process was not restarted after the keys were added.
+
 ## Provider Rules
 - Default `web_search` is always acceptable.
 - When Linkup, Exa, or Tavily are available, use all available providers for relevant high-value queries.
+- If provider-specific MCP/tools are not exposed, call the bundled script:
+  `python3 skills/sunlight-deepresearch/scripts/search-providers.py "<query>" --provider all --json`
+- `--provider all` must attempt every configured provider; do not let the model choose only one provider when multiple keys are present.
 - Merge provider outputs into one evidence set before compression and synthesis.
-- Deduplicate by canonical URL first; if URL is missing, deduplicate by normalized title, source name, and domain.
+- Deduplicate by canonical URL first using the same rules as the Sunlight backend SourceRegistry: normalize scheme to `https`, strip `www.`, strip fragments and trailing slashes, remove tracking params such as `utm_*`, `gclid`, `fbclid`, and `ref`, and preserve meaningful query params. If URL is missing, deduplicate by normalized title, source name, and domain.
+- When the same source appears from multiple providers, keep one source row and preserve all provider labels in notes or the source registry.
 - Preserve one stable source ID per deduplicated source.
 - Keep provider labels in notes when they help explain source provenance.
 - If one provider fails or is missing, continue with the successful providers and default `web_search`.
@@ -64,6 +82,16 @@ Route query variants by provider strength:
 - Use Tavily for exact, fresh, keyword-heavy searches: pricing, changelogs, release notes, official docs, product pages, news, funding, benchmarks, and named facts.
 - Use Exa for semantic and user-voice searches: forum threads, ProductHunt comments, user sentiment, social/community discussion, hard-to-keyword phrasing, and quote discovery.
 - Use Linkup as an additional recall/fetch path for the highest-value queries when installed.
+
+When using the bundled script, choose provider-specific query variants and run them separately rather than sending one generic query:
+
+```bash
+python3 skills/sunlight-deepresearch/scripts/search-providers.py "official pricing changelog <entity>" --provider tavily --json
+python3 skills/sunlight-deepresearch/scripts/search-providers.py "user complaints forum discussion <entity>" --provider exa --json
+python3 skills/sunlight-deepresearch/scripts/search-providers.py "high quality sources about <entity> strategy risks" --provider linkup --json
+```
+
+Use `--max-results 2` or `--max-results 3` for smoke tests and `--max-results 5` or more during real investigator sweeps.
 
 Prefer query diversity over repeated wording. Vary entity names, aliases, source type, timeframe, geography, product/category terms, positive framing, negative framing, and neutral framing.
 

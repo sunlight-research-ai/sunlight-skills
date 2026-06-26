@@ -32,6 +32,7 @@ Run deep research as a disciplined subagent orchestration workflow: decompose th
 - Synthesize only after reviewing the returned findings.
 - Run citation, source-quality, coverage, and contradiction evaluators against the actual final report before final delivery.
 - Resolve conflicts with targeted follow-up research instead of smoothing them over.
+- Before dispatching investigators, run `python3 skills/sunlight-deepresearch/scripts/search-providers.py --check` from the user's project or run folder to detect configured Linkup, Exa, and Tavily keys. If the skill path differs, use the installed skill's script path.
 - Run a final verifier or critic pass before presenting the final report.
 - Block final delivery when key findings or factual sentences lack linked sources.
 - State limitations, confidence, and unresolved questions in the final output.
@@ -49,7 +50,7 @@ Run deep research as a disciplined subagent orchestration workflow: decompose th
 2. Create a research brief using `references/research-brief-template.md`: objective, audience, decision context, entities, timeframe, source requirements, exclusions, output format, and success criteria. If the request is not clear enough to decompose, ask one concise clarifying question before dispatching subagents.
 3. Convert the research brief into a research plan using `references/research-plan-template.md`: classify the request type, preserve the user's intent, extract constraints, and create one focused track per independently researchable unit.
 4. Dispatch focused investigator subagents using `references/subagent-brief-template.md`, with explicit budgets, artifact paths, and source requirements.
-5. Have each investigator run iterative research: create a provider-appropriate query pack, use the model's default `web_search` first, use all available Linkup, Exa, and Tavily providers for relevant query variants when their API keys/tools are available, merge and deduplicate sources, inspect sources, write each useful fetched link to `source-registry.md` and `sources/SRC_NNN.md`, capture source-tagged findings, reflect on missing evidence, then stop when coverage or budget is reached.
+5. Have each investigator run iterative research: create a provider-appropriate query pack, use the model's default `web_search` first, use all available Linkup, Exa, and Tavily providers for relevant query variants when their API keys/tools are available, merge and deduplicate sources, inspect sources, write each useful fetched link to `source-registry.md` and `sources/SRC_NNN.md`, capture source-tagged findings, reflect on missing evidence, then stop when coverage or budget is reached. When provider tools are not exposed directly, run `scripts/search-providers.py "<query>" --provider all --json` and use the returned `provider`, `title`, `url`, and `snippet` fields as candidate sources to inspect and register.
 6. Compress each investigator's raw findings into a clean, source-preserving summary using `references/compression-template.md`.
 7. Run a wave checkpoint using `references/wave-checkpoint-template.md`; dispatch follow-up subagents only for material gaps, contradictions, weak evidence, or missing citation coverage.
 8. Extract structured facts, metrics, entities, and source metadata using `references/structured-data-template.md` when tables, charts, or precise comparisons are useful.
@@ -72,6 +73,7 @@ Run deep research as a disciplined subagent orchestration workflow: decompose th
 - Use `references/report-template.md` when producing a final research artifact.
 - Use `references/persistence-and-runtime.md` when designing a durable implementation or setting budgets.
 - Use `scripts/create-research-plan.py` to draft a starter decomposition when the topic is broad.
+- Use `scripts/search-providers.py --check` before investigator dispatch and `scripts/search-providers.py "<query>" --provider all --json` during provider sweeps when Linkup, Exa, or Tavily are configured.
 - Use `scripts/evaluate-source-coverage.py` to verify the final report has linked-source coverage.
 
 ## Optional LangGraph Use
