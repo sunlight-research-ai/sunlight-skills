@@ -104,7 +104,7 @@ Each investigator should work in a loop:
 5. Reflect on what is still missing.
 6. Continue until the question is answered, evidence becomes repetitive, or the budget is reached.
 
-Use the model's default `web_search` first. If Tavily, Exa, or Linkup credentials/tools are available, use all available providers for relevant query variants, merge their outputs, and deduplicate sources before compression. Do not block or fail the workflow when provider keys are unavailable; continue with default web search and any successful optional providers. Tell new users that optional keys make insights richer by improving source diversity, freshness, user-voice coverage, and recall.
+Use the model's default `web_search` first. If Linkup, Exa, or Tavily credentials/tools are available, use all available providers for relevant query variants, merge their outputs, and deduplicate sources before compression. Do not block or fail the workflow when provider keys are unavailable; continue with default web search and any successful optional providers. Tell new users that optional keys make insights richer by improving source diversity, freshness, user-voice coverage, and recall.
 
 Do not send the same wording blindly to every provider. Build query variants for the track: broad orientation, official/source-of-truth, fresh/current, user voice/community, metrics/benchmarks, and criticism/counterevidence. Use Tavily-style keyword queries for fresh and official facts, Exa-style semantic queries for user voice and hard-to-keyword discovery, and Linkup as an additional recall path when available.
 

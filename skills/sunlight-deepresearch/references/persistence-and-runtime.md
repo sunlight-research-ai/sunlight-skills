@@ -22,9 +22,9 @@ The four most important sizing controls are:
 
 ## Search Provider Defaults
 Default to the model's native `web_search` or equivalent browsing/search capability. Use optional providers only when credentials and tools are present:
-- `TAVILY_API_KEY` for Tavily keyword/news/product-page search.
-- `EXA_API_KEY` for Exa semantic/community/forum/social-style search.
 - `LINKUP_API_KEY` for Linkup web search when installed in the user's environment.
+- `EXA_API_KEY` for Exa semantic/community/forum/social-style search.
+- `TAVILY_API_KEY` for Tavily keyword/news/product-page search.
 
 Optional providers should enrich coverage; they should not be required for the workflow to run. If a provider is missing, rate-limited, or returns errors, continue with default web search and any successful providers, then record the limitation when it materially affects confidence. When multiple providers are available, fan out relevant queries across all of them, merge results, and deduplicate by canonical URL first, then normalized title/source/domain.
 

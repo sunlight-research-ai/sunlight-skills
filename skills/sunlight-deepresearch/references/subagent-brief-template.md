@@ -26,7 +26,7 @@ Questions to answer:
 Source requirements:
 - Treat this as thorough research; do not do a shallow search pass.
 - Start with the model's default web_search and its available source coverage.
-- Use all available optional providers: Tavily, Exa, and Linkup when their tools and credentials are configured.
+- Use all available optional providers: Linkup, Exa, and Tavily when their tools and credentials are configured.
 - Before searching, create provider-appropriate query variants instead of sending the same wording to every provider.
 - Continue with default web_search and any successful optional providers if one provider is unavailable or fails.
 - Merge provider outputs and deduplicate sources before reporting findings.
