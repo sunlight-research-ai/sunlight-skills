@@ -214,8 +214,11 @@ tty_read_secret() {
   local char=""
   tty="$(tty_path)"
   if [[ -r "$tty" && -w "$tty" ]]; then
-    while IFS= read -r -s -N 1 char <"$tty"; do
+    while IFS= read -r -s -n 1 char <"$tty"; do
       case "$char" in
+        "")
+          break
+          ;;
         $'\n'|$'\r')
           break
           ;;
