@@ -174,9 +174,26 @@ tty_read_secret() {
   local __var="$1"
   local tty
   local value=""
+  local char=""
   tty="$(tty_path)"
   if [[ -r "$tty" && -w "$tty" ]]; then
-    IFS= read -rs value <"$tty" || value=""
+    while IFS= read -r -s -n 1 char <"$tty"; do
+      case "$char" in
+        $'\n'|$'\r')
+          break
+          ;;
+        $'\177'|$'\b')
+          if [[ -n "$value" ]]; then
+            value="${value%?}"
+            tty_print $'\b \b'
+          fi
+          ;;
+        *)
+          value+="$char"
+          tty_print "*"
+          ;;
+      esac
+    done
   else
     IFS= read -r value || value=""
   fi
